@@ -1,0 +1,96 @@
+#include "TemperatureDatabase.h"
+#include <string>
+#include <sstream>
+#include <fstream>
+#include "LinkedList.h"
+using namespace std;
+
+// Default constructor/destructor. Modify them if you need to.
+TemperatureDatabase::TemperatureDatabase() : records(LinkedList()){}
+TemperatureDatabase::~TemperatureDatabase() {}
+
+void TemperatureDatabase::loadData(const string& filename) {
+	ifstream ifs(filename);
+  // ensure file is open
+    if (!ifs.is_open())
+    {
+      cout << "Error: Unable to open " << filename << endl;
+	  ifs.clear();
+    }
+	string id = "";
+	string stringline;
+	int year = 0;
+	int month = 0;
+	double temperature = 0.0;
+	
+	while(getline(ifs, stringline)){
+		stringstream stringy(stringline);
+		stringy >> id;
+		if(stringy.bad() || stringy.fail()){
+			if(stringline.size() != 0){
+				cout << "Error: Invalid id " << id << endl;
+				stringy.clear();
+			}
+		}
+		else if(id == ""){
+			cout << "Error: Invalid id " << id << endl;
+			stringy.clear();
+		}
+		
+		stringy >> year;
+		if(stringy.bad() || stringy.fail()){
+			if(stringline.size() != 0){
+				cout << "Error: Invalid year " << year << endl;
+				stringy.clear();
+			}
+		}
+		else if(year < 1800 || year >= 2021){
+			cout << "Error: Invalid year " << year << endl;
+			stringy.clear();
+		}
+		
+		stringy >> month;
+		if(stringy.bad() || stringy.fail()){
+			if(stringline.size() != 0){
+				cout << "Error: Invalid month " << month << endl;
+				stringy.clear();
+			}
+		}
+		else if(month <= 0 || month > 12){
+			cout << "Error: Invalid month " << month << endl;
+			stringy.clear();
+		}
+		
+		stringy >> temperature;
+		if(stringy.bad() || stringy.fail()){
+			if(stringline.size() != 0){
+				cout << "Error: Invalid temperature " << temperature << endl;
+				stringy.clear();
+			}
+		}
+		else if(temperature != -99.99){
+			if(temperature < -50 || temperature > 50){
+				cout << "Error: Invalid temperature " << temperature << endl;
+				stringy.clear();
+			}
+		}
+	}
+}
+
+// Do not modify
+void TemperatureDatabase::outputData(const string& filename) {
+	ofstream dataout("sorted." + filename);
+	
+	if (!dataout.is_open()) {
+		cout << "Error: Unable to open " << filename << endl;
+		exit(1);
+	}
+	dataout << records.print();
+}
+
+void TemperatureDatabase::performQuery(const string& filename) {
+	std::string hi;
+	hi = filename;
+	// Implement this function for part 2
+	//  Leave it blank for part 1
+}

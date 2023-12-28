@@ -1,0 +1,170 @@
+// TODO: Implement this source file
+#include <iostream>
+#include <fstream>
+#include "MyString.h"
+using std::cin, std::cout, std::endl, std::ifstream, std::istream;
+
+MyString::MyString(): m_size(0), m_capacity(1), woo(new char[m_capacity] {} )
+{ }
+
+MyString::MyString(const MyString& str): m_size(0), m_capacity(1), woo(nullptr) {
+	m_size = str.m_size;
+	m_capacity = str.m_capacity;
+	woo = new char[m_capacity]{};
+	
+	for(unsigned int i = 0; i<m_size; ++i){
+		woo[i] = str.woo[i];
+	}
+	woo[m_size] = '\0';
+}
+
+MyString::MyString(const char* s): m_size(0), m_capacity(1), woo(new char[m_capacity]{}) {
+	bool finish = true;
+	int counter = 0;
+	while (finish){
+		if (s[counter] == '\0'){
+			finish = false;
+		}
+		if (!finish){
+			break;
+		}
+		woo[counter] = s[counter];
+		++counter;
+		m_size = counter;
+		m_capacity = m_size * 2;
+	}
+	woo[m_size] = '\0';
+}
+
+
+MyString::~MyString(){
+	delete[] woo;
+}
+
+void MyString::resize (size_t n){
+	m_size = n;
+}
+
+size_t MyString::capacity() const noexcept{
+	return m_capacity;
+}
+
+//add the Mystring stuff
+size_t MyString::size() const noexcept{
+	return m_size;
+	
+}
+
+size_t MyString::length() const noexcept{
+	return m_size;
+}
+
+const char* MyString::data() const noexcept{
+	return woo;
+}
+
+bool MyString::empty() const noexcept{
+	if(m_size == 0){
+		return true;
+	}
+	else{
+		return false;
+	}
+}
+
+const char& MyString::front() const{
+	return woo[0];
+}
+
+
+const char& MyString::at (size_t pos) const{
+	if (m_size <= pos){
+		throw std::invalid_argument("You're stupid");
+	}
+	else{
+		return woo[pos];
+	}
+}
+void MyString::clear() noexcept{
+	woo[0] = '\0';
+	m_size = 0;
+}
+
+
+MyString& MyString::operator=(const MyString& str){
+	if (&str == this){
+		return *this;
+	}
+
+	delete[] woo;
+	woo = new char[str.m_capacity];
+	m_capacity = str.m_capacity;
+	m_size = str.m_size;
+
+	for (unsigned int i = 0; i < str.m_size; ++i){
+		woo[i] = str.woo[i];
+	}
+
+	return *this;
+}	
+
+
+
+MyString& MyString::operator+=(const MyString& str){
+	unsigned int m_size_2 = m_size;
+	m_size = m_size + str.m_size;
+	m_capacity = m_capacity +  str.m_capacity;
+	int p = 0;
+	char* woo_2 = new char[m_capacity];
+	for (unsigned int i = 0; i < m_size; ++i){
+		if (m_size_2 > i){
+			woo_2[i] = woo[i];
+		}
+		else{ 
+			woo_2[i] = str.woo[p]; 
+			p = p+1;
+		}
+	}	
+	delete[] woo;
+	woo = woo_2;
+	woo[m_size] = '\0';
+	return *this;
+}
+
+
+
+
+size_t MyString::find(const MyString& str, size_t pos) const {
+	size_t findd = 0;
+	size_t position = 0;
+	
+	for(size_t i = pos; i<m_size; ++i){
+		if(woo[i] == str.at(0)){
+			findd = 0;
+			position = i;
+			for(size_t j = 0; j<str.size();j++){
+				if(i>=m_size){
+					break;
+				}
+				if(woo[i] == str.at(j)){
+					findd++;
+				}
+				i++;
+			}
+			if(findd == str.size()){
+				return position;
+			}
+		}
+	}
+	return -1;
+}	
+
+std::ostream& operator<< (std::ostream& os, const MyString& str){
+	for(unsigned int i = 0; i<str.size(); ++i){
+		os << str.at(i);
+	}
+	return os;
+}
+
+
+

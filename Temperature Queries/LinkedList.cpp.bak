@@ -1,0 +1,124 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+#include "LinkedList.h"
+#include "Node.h"
+using namespace std;
+
+LinkedList::LinkedList(): head(nullptr), tail(nullptr) {
+
+}
+
+
+
+LinkedList::~LinkedList(){
+	Node* currPtr = nullptr;
+	while (head != nullptr){
+		currPtr = head;
+		head = head->next;
+		currPtr->next = nullptr;
+		delete(currPtr);
+	}
+	currPtr = nullptr;
+	tail = nullptr;
+	head = nullptr;
+}
+
+LinkedList::LinkedList(const LinkedList& source): head(nullptr), tail(nullptr) {
+	Node* currPtr = source.head;
+
+	while (currPtr != nullptr){
+		insert(currPtr->data.id, currPtr->data.year, currPtr->data.month, currPtr->data.temperature);
+
+		currPtr = currPtr->next;
+	}
+}
+
+LinkedList& LinkedList::operator=(const LinkedList& source) {
+	if (this == &source){
+		return *this;
+	}
+	else{
+		clear();
+
+		Node* currPtr = source.head;
+		while (currPtr != nullptr){
+			insert(currPtr->data.id, currPtr->data.year, currPtr->data.month, currPtr->data.temperature);
+
+			currPtr = currPtr->next;
+		}
+	}
+	return *this;
+}
+
+void LinkedList::insert(string location, int year, int month, double temperature) {
+	// Implement this function
+	Node* add = new Node(location, year, month, temperature);
+	Node* currPtr = head;
+	Node* prevPtr = nullptr;
+	bool a = true;
+	while(currPtr != nullptr){
+		a = false;
+		if(*add < *currPtr){
+			break;
+		}
+		prevPtr = currPtr;
+		currPtr = currPtr -> next;
+	}
+	if((currPtr == nullptr) && (a)){
+		head = add;
+		tail = add;
+	}
+	else if(currPtr == nullptr){
+		prevPtr -> next = add;
+		add -> next = currPtr;
+		tail = add;
+	}
+	else if((currPtr != nullptr) && (currPtr == head)){
+		head = add;
+		add -> next = currPtr;
+	}
+	else{
+		add -> next = currPtr;
+		prevPtr -> next = add;
+	}
+}
+
+void LinkedList::clear() {
+	Node* currPtr = nullptr;
+	while (head != nullptr){
+		currPtr = head;
+		head = head->next;
+		currPtr->next = nullptr;
+		delete(currPtr);
+	}
+	currPtr = nullptr;
+	tail = nullptr;
+	head = nullptr;
+}
+
+Node* LinkedList::getHead() const {
+	return head;
+}
+
+string LinkedList::print() const {
+	string outputString;
+	stringstream stream;
+	Node* currPtr = head;
+	string temp = "";
+	while (currPtr != nullptr){
+		//temp = temp + currPtr->data.id + " " + to_string(currPtr->data.year) + " " + to_string(currPtr->data.month) + " " + to_string(currPtr->data.temperature);
+		stream << currPtr->data.id << ' ' << currPtr->data.year << ' ' << currPtr->data.month << ' ' << currPtr->data.temperature << "\n";
+		//temp = temp + "\n"; //remove this if using stream
+		temp = stream.str();
+		currPtr = currPtr -> next;
+	}
+	outputString = temp;
+	return outputString;
+}
+
+ostream& operator<<(ostream& os, const LinkedList& ll) {
+	/* Do not modify this function */
+	os << ll.print();
+	return os;
+}
